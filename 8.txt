@@ -1,0 +1,55 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from seaborn import load_dataset
+
+dataset = sns.load_dataset('titanic')
+dataset.head()
+
+#Distributional Plot
+sns.distplot(dataset['fare'])
+sns.distplot(dataset['fare'], kde=False, bins=10)
+
+#Joint Plot
+sns.jointplot(x='age', y='fare', data=dataset)
+sns.jointplot(x='age', y='fare', data=dataset, kind='hex')
+
+#Pair Plot
+dataset = dataset.dropna()
+sns.pairplot(dataset)
+sns.pairplot(dataset, hue='sex')
+
+#Rug Plot
+sns.rugplot(dataset['fare'])
+
+#Bar Plot
+sns.barplot(x='sex', y='age', data=dataset)
+
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.barplot(x='sex', y='age', data=dataset, estimator=np.std)
+
+#Count plot
+sns.countplot(x='sex', data=dataset)
+
+#Box Plot
+sns.boxplot(x='sex', y='age', data=dataset)
+sns.boxplot(x='sex', y='age', data=dataset, hue="survived")
+
+#Voilin Plot
+sns.violinplot(x='sex', y='age', data=dataset)
+sns.violinplot(x='sex', y='age', data=dataset, hue='survived')
+sns.violinplot(x='sex', y='age', data=dataset, hue='survived', split=True)
+
+#Strip Plot
+sns.stripplot(x='sex', y='age', data=dataset)
+sns.stripplot(x='sex', y='age', data=dataset, jitter=True)
+sns.stripplot(x='sex', y='age', data=dataset, jitter=True, hue='survived')
+sns.stripplot(x='sex', y='age', data=dataset, jitter=True, hue='survived', split=True)
+
+
+
+
+

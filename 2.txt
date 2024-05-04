@@ -1,0 +1,187 @@
+import pandas as pd
+import numpy as np
+from scipy import stats
+import matplotlib.pyplot as plt
+
+df=pd.read_csv("student_data.csv")
+df.head(5)
+df.isnull()
+
+null_series=pd.isnull(df["Math_Score"])
+df[null_series]
+
+df.notnull()
+
+notnull_series=pd.notnull(df["Placement_Score"])
+df[notnull_series]
+
+missing_values = ["NA"]
+df = pd.read_csv("student_data.csv", na_values = missing_values)
+df
+
+#make new variable for 0 values
+ndf = df
+ndf.fillna(0)
+
+#make null values as MEAN
+m_v=df['Math_Score'].mean()
+df['Math_Score'].fillna(value = m_v, inplace=True)
+df
+
+#make null values as MEDIAN
+m_v=df['Placement_Score'].median()
+df['Placement_Score'].fillna(value = m_v, inplace=True)
+df
+
+#make null values as MINIMUM
+m_v=df['Reading_Score'].min()
+df['Reading_Score'].fillna(value = m_v, inplace=True)
+df
+
+#make null values as MAXIMUM
+m_v=df['Writing_Score'].max()
+df['Writing_Score'].fillna(value = m_v, inplace=True)
+df
+
+#make null values as SANDARD DEVIATION
+m_v=df['OFFER COUNT'].std()
+df['OFFER COUNT'].fillna(value = m_v, inplace=True)
+df
+
+#3. Identification and Handling of Outliers
+#3.1 Detecting outliers using Boxplot
+
+#plot BOX PLOT
+col = ['Math_Score', 'Reading_Score' , 'Writing_Score','Placement_Score']
+df.boxplot(col)
+plt.show()
+
+#We can now print the Outliers for each column with reference to the box plot.
+
+print(np.where(df['Math_Score']>90))
+print(np.where(df['Reading_Score']<25))
+print(np.where(df['Writing_Score']<30))
+
+#3.2 Detecting outliers using Scatterplot:
+
+fig, ax = plt.subplots(figsize = (20,10))
+ax.scatter(df['Placement_Score'], df['OFFER COUNT'])
+ax.set_xlabel('(Proportion non-retail business acres)/(town)')   optional
+ax.set_ylabel('(Full-value property-tax rate)/($10,000)')        optional
+plt.show() 
+
+#We can now print the outliers with reference to scatter plot.
+
+print(np.where((df['Placement_Score']<50) & (df['Placement_Score']>85) & (df['OFFER COUNT']>1)))
+print(np.where((df['OFFER COUNT']<3)))
+
+#3.3 Detecting outliers using Z-Score:
+
+z = np.abs(stats.zscore(df['Math_Score']))
+print(z)
+threshold = 0.18
+
+#Display the sample outliers
+
+sample_outliers = np.where(z <threshold)
+sample_outliers
+
+#3.4 Detecting outliers using Inter Quantile Range(IQR):
+
+sorted_rscore= sorted(df['Math_Score'])
+sorted_rscore
+
+q1 = np.percentile(sorted_rscore, 25)
+q3 = np.percentile(sorted_rscore, 75)
+print(q1,q3)
+
+IQR = q3-q1
+lwr_bound = q1-(0.1*IQR)
+upr_bound = q3+(1.0*IQR)
+print(lwr_bound, upr_bound)
+
+r_outliers = []
+for i in sorted_rscore:
+	if ( i<lwr_bound or i>upr_bound):
+		r_outliers.append(i)
+print(r_outliers)
+
+#4.1 Trimming/removing the outlier
+
+new_df=df
+for i in sample_outliers:
+	new_df.drop(i,inplace=True)
+new_df
+
+#4.2 Quantile based flooring and capping:
+
+df_stud=df
+ninetieth_percentile = np.percentile(df_stud['Math_Score'], 90)
+b = np.where(df_stud['Math_Score']>ninetieth_percentile,ninetieth_percentile, df_stud['Math_Score'])
+print("New array:",b)
+
+
+df_stud.insert(1,"m score",b,True)
+df_stud
+
+#4.3 Mean/Median imputation
+
+col = ['Reading_Score']
+df.boxplot(col)
+plt.show()
+
+
+median=np.median(sorted_rscore)
+median
+
+#Replace the upper bound outliers using median value
+
+refined_df=df
+refined_df['Reading_Score'] = np.where(refined_df['Reading_Score'] >upr_bound, median,refined_df['Reading_Score'])
+refined_df
+
+#Replace the lower bound outliers using median value
+
+refined_df['Reading_Score'] = np.where(refined_df['Reading_Score'] <lwr_bound, median,refined_df['Reading_Score'])
+refined_df
+
+#Draw the box plot for redefined_df
+
+col = ['Reading_Score']
+refined_df.boxplot(col)
+plt.show()
+
+#5. To change the scale for better understanding (Attribute or feature
+construction)
+
+new_df['Math_Score'].plot(kind = 'hist')
+plt.show()
+
+df['log_math'] = np.log10(df['Math_Score'])
+
+df['log_math'].plot(kind = 'hist')
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

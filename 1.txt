@@ -1,0 +1,106 @@
+import pandas as pd
+import numpy as np
+
+
+iris = pd.read_csv("file_name.csv")
+col_names = ['Sepal_Length','Sepal_Width','Petal_Length','Petal_Width','Species']
+iris = pd.read_csv(csv_url, names = col_names)
+dataset.head(n=5)
+ dataset.tail(n=5)
+ dataset.index
+dataset.columns
+dataset.shape
+dataset.dtypes
+dataset.columns.values
+dataset.describe(include='all')
+dataset.sort_values(by="Column name")
+dataset.iloc[5] Purely integer-location based indexing for selection by position.
+dataset[0:3] Selecting via [], which slices the rows.
+
+-------------------------------------------------------------------------------------------
+
+#Checking of Missing Values in Dataset:
+ DataFrame.isnull()
+dataframe.isnull().sum()  -- count missing values
+dataframe.isnull().sum(axis = 1)
+dataframe.isna().sum()
+dataframe.col_name.isnull().sum()
+
+#groupby count of missing values of a column.
+df1.groupby(['Gender'])['Score'].apply(lambda x: x.isnull().sum())
+
+------------------------------------------------------------------------------------------
+
+#Panda functions for Data Formatting and Normalization
+from sklearn import preprocessing
+min_max_scaler = preprocessing.MinMaxScaler()    #Create a minimum and maximum processor object
+x=df.iloc[:,:4]     #Separate the feature from the class label
+x_scaled = min_max_scaler.fit_transform(x)  #Create an object to transform the data to fit minmax processor
+df_normalized = pd.DataFrame(x_scaled)   #Run the normalizer on the dataframe
+df_normalized   #View the dataframe
+
+------------------------------------------------------------------------------------------
+
+#Panda Functions for handling categorical variables
+
+#1.Label Encoding
+
+from sklearn import preprocessing
+df['Species'].unique()
+label_encoder = preprocessing.LabelEncoder()
+df['Species']= label_encoder.fit_transform(df['Species'])   #Encode labels in column 'species
+df['Species'].unique()
+
+#2. One-Hot Encoding
+
+from sklearn import preprocessing
+df=read_csv("iris.csv")
+df['Species'].unique()
+features_df=df.drop(columns=['Species'])
+enc = preprocessing.OneHotEncoder()    #: Apply one_hot encoder for Species column
+enc_df=pd.DataFrame(enc.fit_transform(df[['Species']])).toarray()
+df_encode = features_df.join(enc_df)   # Join the encoded values with Features variable
+df_encode
+df_encode.rename(columns = {0:'Iris-Setosa', 1:'Iris-Versicolor',2:'Iris-virginica'}, inplace = True)    #Rename
+df_encode
+
+#2. Dummy Variable 
+from sklearn import preprocessing
+df=read_csv("iris.csv")
+df['Species'].unique()
+one_hot_df = pd.get_dummies(df, prefix="Species",columns=['Species'], drop_first=True)
+one_hot_df
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
